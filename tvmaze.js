@@ -13,33 +13,42 @@ const $searchForm = $("#searchForm");
  */
 
 async function getShowsByTerm(term) {
-  //takes term from submitted form value and returns information about
-  //show matching term. 
-  //response.data[array].show.id ==> path to show ID
-  let shows = []
-  let searchTerm = term
+  //takes term from submitted form value 
+  //returns information about show matchingg term
+  //example = response.data[index].show.id ==> path to show ID
+  let shows = [];
+  let searchTerm = term;
   console.log(searchTerm);
-  let response = await axios.get(`http://api.tvmaze.com/search/shows?q="${searchTerm}`)
-  console.log(response)
-  let responseList = response.data
-  //response.data
+  let response = await axios.get(`http://api.tvmaze.com/search/shows?q="${searchTerm}`);
+  console.log(response);
+  let responseList = response.data;
 
+//if no image, assign default otherwise use provided image
+//loops over responseList
+//pushes object with key:value pair of asked for informtion into an array
+//return array for future use/other function use
   for (let i = 0; i < responseList.length; i++) {
+    let showImage;
+    if (response.data[i].show.image === null) {
+      showImage = "https://store-images.s-microsoft.com/image/apps.65316.13510798887490672.6e1ebb25-96c8-4504-b714-1f7cbca3c5ad.f9514a23-1eb8-4916-a18e-99b1a9817d15?mode=scale&q=90&h=300&w=300";
+    } else {
+      showImage = response.data[i].show.image.medium;
+    }
     shows.push({
       id: response.data[i].show.id,
       name: response.data[i].show.name,
       summary: response.data[i].show.summary,
-      image: response.data[i].show.image.medium
+      image: showImage
     })
-    console.log(shows)
+    console.log(shows);
   }
 
-  return shows
+  return shows;
 
 }
 
 
-/** Given list of shows, create markup for each and to DOM */
+/** Given list of shows, create markup for each and append to DOM */
 
 function populateShows(shows) {
   $showsList.empty();
